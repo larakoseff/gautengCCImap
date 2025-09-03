@@ -1,0 +1,519 @@
+:root {
+  --bg-dark: #0f0f10;
+  --panel-dark: #121214;
+  --border: #e6e6e6;
+  --muted: #6b7280;
+  --card-header-h: 56px;
+}
+
+/* Layout: left | map | legend */
+.wrap {
+  width: 100%;
+  display: grid;
+  min-height: 0;
+  grid-template-columns: 480px minmax(0, 1fr) 350px; /* fixed sidebars, flexible map */
+  height: 100dvh;
+  align-items: stretch;
+}
+
+.left,
+.map,
+.legend {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.left,
+.legend {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Let the SVG grow to fill the map column exactly */
+.map > svg {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+}
+
+/* LEFT PANEL */
+.left {
+  background-color: var(--bg-dark);
+  color: #fff;
+
+  /* NEW: stretch to full column height */
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 16px;
+}
+
+.title {
+  padding: 20px;
+  font-family: "heimat-stencil", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 30px;
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+
+.intro {
+  padding: 20px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.mobilemessage {
+  padding: 20px;
+  margin: 0;
+  display: none;
+}
+
+/* Card */
+
+:root {
+  --card-header-h: 56px; /* tweak to taste */
+}
+
+/* Base: 1 column. Header on top, then body. */
+.card {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--card-header-h) minmax(0, 1fr);
+  grid-template-areas:
+    "header"
+    "body";
+}
+
+/* When an image exists (desktop/tablet): still ONE column, image sits BELOW body */
+.cardHasImage {
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--card-header-h) auto auto; /* header, body, image */
+  grid-template-areas:
+    "header"
+    "body"
+    "image";
+}
+
+/* Modal backdrop & sheet */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end; /* bottom sheet */
+}
+
+.modalSheet {
+  background: var(--panel-dark, #121214);
+  color: #fff;
+  width: 100%;
+  max-height: 88vh;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
+  overflow: auto;
+  /* spacing inside the sheet reuses card sections */
+}
+
+.modalHandle {
+  width: 40px;
+  height: 4px;
+  background: #d1d5db;
+  border-radius: 999px;
+  margin: 8px auto 6px;
+  opacity: 0.9;
+}
+
+/* HEADER (data header OR empty hint) */
+.cardHeader,
+.cardEmptyHint {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  margin: 0; /* ensure no extra gap */
+  border-top: solid 1px #e8e8e8;
+}
+.cardHeader {
+  border-bottom: solid 1px #e8e8e8;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.cardDotandTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardEmptyHint {
+  text-align: center;
+}
+
+.cardDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background-color: var(--cat-color, #111);
+  display: inline-block;
+}
+.cardTitle {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* BODY (left column) */
+.cardBody {
+  grid-area: body;
+  position: relative; /* anchor for overlay */
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+/* >>> MOVE the "empty grid" overlay to the BODY only <<< */
+.cardEmpty .cardBody::before,
+.cardEmpty .cardBody::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.cardEmpty .cardBody::before {
+  background-image: repeating-linear-gradient(
+    #f4f4f6 0 1px,
+    transparent 1px 40px
+  );
+  background-size: 40px 40px;
+}
+.cardEmpty .cardBody::after {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f4f4f6 0 1px,
+    transparent 1px 40px
+  );
+  background-size: 40px 40px;
+}
+
+/* Content in body sits above the overlay (only matters if you later show content in empty state) */
+.cardBody > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cardMeta {
+  font-size: 12px;
+  opacity: 0.8;
+}
+.cardText {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e8e8e8;
+}
+.cardLink {
+  color: #9ee6ff;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* IMAGE (right column when present) */
+.cardImage {
+  grid-area: image;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clearBtn {
+  margin: 4px 0 10px;
+  width: 10rem;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #f4f4f6;
+  cursor: pointer;
+}
+
+.closeBtn {
+  width: 3rem;
+  padding: none;
+  border-radius: none;
+  color: none;
+  background-color: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* MAP PANEL */
+.map {
+  background-color: #fff;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  align-self: stretch;
+}
+
+.hint {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.svgBlock {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* LEGEND */
+.legend {
+  background-color: #fff;
+  border: 1px solid var(--border);
+  padding: 12px;
+  overflow: auto;
+  height: 100%;
+}
+
+.legendTitle {
+  color: #0a0908;
+  font-family: "heimat-stencil", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  text-align: left;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
+}
+
+.legendTitleRow {
+  margin-bottom: 8px;
+}
+.legendTitleNote {
+  color: #0a0908;
+  font-size: 12px;
+}
+
+.legendList {
+  display: grid;
+  gap: 1px;
+}
+
+/* One row per category */
+.legendRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Rectangle swatch instead of circle */
+.legendSwatch {
+  width: 24px;
+  height: 8px;
+  background-color: var(--cat-color, #111);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+/* Two-line label: small hint + the actual category */
+.legendLabelSmall {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.legendCategory {
+  font-size: 13px;
+  color: #0a0a0a;
+}
+
+/* Legend interactivity */
+.legendRow {
+  cursor: pointer;
+  user-select: none;
+  padding: 0 2px;
+}
+.legendRow:focus-visible {
+  outline: 2px solid #3a86ff;
+  outline-offset: 2px;
+}
+
+.legendRowActive {
+  background: none;
+}
+.legendRowDim {
+  opacity: 0.4;
+}
+.legendRowDim .legendSwatch {
+  filter: grayscale(1) brightness(1.1);
+}
+
+/* Points dim when not in the active category */
+.pointDim {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Small clear pill */
+.legendClear {
+  margin: 4px 0 10px;
+  width: 10rem;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #181818;
+  background: #fff;
+  color: #181818;
+  cursor: pointer;
+}
+.legendClear:hover {
+  background: #f7f7f7;
+}
+
+/* Points */
+.pointGroup {
+  cursor: pointer;
+}
+.point {
+  fill: var(--cat-color, #111);
+}
+.pointHit {
+  fill: transparent;
+}
+
+/* City labels */
+.cityLayer {
+  pointer-events: none;
+} /* labels shouldn't block map interactions */
+.cityDot {
+  fill: #111;
+}
+.cityText {
+  font-size: 12px;
+  line-height: 1.1;
+  fill: #111;
+  /* halo for legibility over fills/borders */
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 0.5px;
+  stroke-linejoin: round;
+  
+}
+
+.pointHalo {
+  pointer-events: none;           /* don’t block cursor */
+  fill: none;
+  stroke: #fff;                   /* white outer halo for contrast */
+  stroke-width: 2px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0.5px 0 rgba(0,0,0,0.45)); /* subtle legibility boost */
+}
+
+/* === MOBILE EXCEPTION: two columns (body | image) only on small screens === */
+@media (max-width: 1024px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .legend {
+    max-height: none;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+  .cardHasImage {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: var(--card-header-h) minmax(0, 1fr);
+    grid-template-areas:
+      "header header"
+      "body   image";
+  }
+
+  .card {
+    display: none;
+  }
+
+  .left {
+    min-width: 0;
+  }
+
+  .cardBody {
+    /* allow content to scroll instead of growing the page */
+    min-height: 0; /* important so the grid can size properly */
+    overflow: auto;
+  }
+
+  /* When empty, give the body some height so the grid overlay looks intentional */
+  .cardEmpty .cardBody {
+    min-height: clamp(160px, 35vh, 320px);
+  }
+
+  /* If you show images, keep them a sensible height when stacked */
+  .cardImage {
+    height: clamp(120px, 28vw, 200px);
+    aspect-ratio: auto; /* override if you previously set aspect-ratio */
+  }
+
+  .modalSheet .cardHeader {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 2;
+  }
+
+  .mobilemessage {
+    padding: 20px;
+    margin: 0;
+    display: block;
+    border-top: solid 1px #e8e8e8;
+  }
+
+  .clearBtn {
+    display: none;
+  }
+
+  .closeBtn,
+  .modalClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; /* pick a size you like */
+    height: 32px;
+    padding: 0; /* remove text button padding */
+    background: transparent; /* keep your styles */
+    border: 0;
+    color: #e5e7eb;
+    cursor: pointer;
+    flex: 0 0 auto; /* <-- key: don't let flexbox shrink this to 0 */
+  }
+
+  .modalClose img,
+  .closeBtn img {
+    display: block; /* avoid inline-gap quirks */
+    width: 40px; /* scale the glyph inside the 32px button */
+    height: 40px;
+  }
+}

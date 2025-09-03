@@ -1,0 +1,39 @@
+html,
+body,
+#root {
+  height: 100%;
+  font-family: "TT Commons Pro", sans-serif;
+}
+
+
+
+@font-face {
+  font-family: "TT Commons Pro";
+  src:
+    url("/fonts/TT_Commons_Pro_Medium.woff2") format("woff2"),
+    url("/fonts/TT_Commons_Pro_Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The dashboard area stretches; footer stays at the bottom */
+.pageMain {
+  flex: 1 1 auto;
+  display: block; /* keep it simple; your dashboard handles its own grid */
+}
+
+/* Optional footer styling */
+.pageFooter {
+  border: none;
+  background: #caffbf;
+  color: #333;
+  padding: 14px 16px;
+  font-size: 13px;
+}
